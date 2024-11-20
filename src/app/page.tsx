@@ -1,101 +1,126 @@
+'use client'
+
 import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@radix-ui/react-label";
+import { useState } from "react";
+import { useRouter } from 'next/navigation';
+import { loginUser } from "./auth/login/actions";
 
-export default function Home() {
+
+export default function LoginPage() {
+  
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const result = await loginUser(formData);
+
+    if (result.success) {
+      router.push('/student/dashboard');
+    } else {
+      // Handle specific errors
+      setError('general' in result.error ? result.error.general : 'Login failed');
+    }
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+    <div className="flex items-center justify-center min-h-screen p-8 bg-gray-50 dark:bg-gray-900">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6 sm:p-8 dark:bg-gray-800">
+        {/* Header Section */}
+        {error && (
+                        <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
+                            {typeof error === "string" ? error : "Please fix the highlighted fields."}
+                        </div>
+                        )}
+        <div className="text-center mb-6">
           <Image
-            aria-hidden
             src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+            alt="Students Resource Centre Logo"
+            width={100}
+            height={100}
+            className="mx-auto"
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+            Welcome Back!
+          </h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Log in to access your resources.
+          </p>
+        </div>
+
+        {/* Login Form */}
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          {/* Email Input */}
+          <div>
+            <Label
+              htmlFor="studentNo"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Student Number
+            </Label>
+            <Input
+              type="text"
+              id="studentNo"
+              name="studentNo"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+              placeholder="Student Number"
+              required
+            />
+          </div>
+
+          {/* Password Input */}
+          <div>
+            <Label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Password
+            </Label>
+            <Input
+              type="password"
+              id="password"
+              name="password"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+
+          {/* Login Button */}
+          <Button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
+            Log In
+          </Button>
+        </form>
+
+        {/* Forgot Password and Signup Links */}
+        <div className="text-sm text-center text-gray-600 dark:text-gray-400 mt-4">
+          <Link href="/auth/forgot_password" className="text-blue-600 hover:underline dark:text-blue-400">
+          
+              Forgot password?
+       
+            </Link>
+          
+        </div>
+        <div className="text-sm text-center text-gray-600 dark:text-gray-400 mt-2">
+          Don’t have an account?{" "}
+          <Link href="/auth/register" className="text-blue-600 hover:underline dark:text-blue-400">
+              Sign up
+          </Link>
+        </div>
+        <Button className="w-full bg-red-100 text-grey-300  py-2 px-4 rounded-md hover:bg-red-300 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:bg-red-500 dark:hover:bg-red-600">
+          <Link href="/auth/admin">
+          SignIn as Admin
+          </Link>
+        </Button>
+      </div>
     </div>
   );
 }
