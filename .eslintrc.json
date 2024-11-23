@@ -8,6 +8,9 @@
       "@typescript-eslint/no-explicit-any": "off",
       
       // Suppress unused variable warnings
-      "@typescript-eslint/no-unused-vars": "off"
+      "@typescript-eslint/no-unused-vars": "off",
+
+      // Suppress unescaped entities warning
+      "react/no-unescaped-entities": "off"
     }
   }
