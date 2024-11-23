@@ -1,6 +1,7 @@
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@radix-ui/react-label";
+import Link from "next/link";
 
 
 export default function ForgotPasswordPage() {
@@ -32,9 +33,9 @@ export default function ForgotPasswordPage() {
                     Reset Password
                 </Button>
                 <div className="text-center">
-                    <a href="/" className="text-sm text-indigo-600 hover:text-indigo-500">
+                    <Link href="/" className="text-sm text-indigo-600 hover:text-indigo-500">
                         Back to login
-                    </a>
+                    </Link>
                 </div>
             </form>
         </div>
