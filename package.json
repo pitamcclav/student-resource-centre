@@ -4,8 +4,8 @@
    "private": true,
    "scripts": {
       "dev": "next dev",
-      "build": "next build || true",
-      "start": " npx prisma migrate deploy && npx tsc && node ./build/index.js",
+      "build": "next build || true && npx prisma generate && npx prisma migrate deploy",
+      "start": "node ./build/index.js && next start ",
       "lint": "next lint"
       },
 
