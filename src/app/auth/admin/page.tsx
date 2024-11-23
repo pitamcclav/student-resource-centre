@@ -14,7 +14,7 @@ export default function AdminLoginPage() {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
-    console.log('form data entries:', Array.from(formData.entries()));
+    console.log('form data entries:', Array.from((formData as any).entries()));
 
 
     const result = await loginAdmin(formData);
@@ -22,7 +22,11 @@ export default function AdminLoginPage() {
     if (result.success) {
       router.push('/admin/dashboard');
     } else {
-      setError(result.error?.general || 'Login failed');
+      if ('general' in result.error) {
+        setError(result.error.general || 'Login failed');
+      } else {
+        setError('Login failed');
+      }
     }
   }
 
