@@ -3,10 +3,12 @@
    "version": "0.1.0",
    "private": true,
    "scripts": {
+      "postinstall": "prisma generate",
       "dev": "next dev",
       "build": "next build || true && npx prisma migrate deploy",
       "start": "node src/index.ts && next start ",
-      "lint": "next lint"
+      "lint": "next lint",
+      "vercel-build": "prisma generate && prisma migrate deploy && node src/index.ts &&next build || true"
       },
 
    "dependencies": {
