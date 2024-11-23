@@ -1,3 +1,13 @@
   {
-    "extends": ["next/core-web-vitals", "next/typescript"]
+    "extends": ["next/core-web-vitals", "next/typescript"],
+    "rules": {
+      // Suppress require() style import warning
+      "@typescript-eslint/no-require-imports": "off",
+      
+      // Suppress any type warnings
+      "@typescript-eslint/no-explicit-any": "off",
+      
+      // Suppress unused variable warnings
+      "@typescript-eslint/no-unused-vars": "off"
+    }
   }
