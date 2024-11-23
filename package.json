@@ -6,7 +6,7 @@
       "postinstall": "prisma generate",
       "dev": "next dev",
       "build": "next build || true && npx prisma migrate deploy",
-      "start": "node src/index.ts && next start ",
+      "start": "next start ",
       "lint": "next lint",
       "vercel-build": "prisma generate && prisma migrate deploy && node src/index.ts && next build || true"
       },
