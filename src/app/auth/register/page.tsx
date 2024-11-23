@@ -25,7 +25,7 @@ export default function RegisterPage() {
             return;
           }
           formData.set("programId", programId.toString());
-        console.log('form data entries:', Array.from(formData.entries()));
+        console.log('form data entries:', Array.from((formData as any).entries()));
 
         const result = await registerUser(formData);
 
@@ -35,7 +35,7 @@ export default function RegisterPage() {
             
             // Handle validation errors
         } else {
-            setError('general' in result.errors ? result.errors.general : 'Registration failed');
+            setError('general' in result.error ? result.error.general : 'Registration failed');
         }
         
     }
