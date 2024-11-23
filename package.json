@@ -5,12 +5,11 @@
    "scripts": {
       "postinstall": "prisma generate",
       "dev": "next dev",
-      "build": "prisma generate && prisma migrate deploy && node src/index.ts && next build || true ",
+      "build": "prisma generate && prisma migrate deploy && node src/index.ts && next build ",
       "start": "next start ",
       "lint": "next lint",
-      "vercel-build": "prisma generate && prisma migrate deploy && node src/index.ts && next build || true"
-      },
-
+      "vercel-build": "prisma generate && prisma migrate deploy && node src/index.ts && next build"
+   },
    "dependencies": {
       "@hookform/resolvers": "^3.9.1",
       "@prisma/client": "^5.22.0",
@@ -60,9 +59,9 @@
       "prisma": "^5.22.0",
       "tailwindcss": "^3.4.1",
       "ts-node": "10.9.1",
-      "typescript": "4.5.2"
+      "typescript": "^5.7.2"
    },
    "engines": {
-    "node": "20.x"
-  }
+      "node": "20.x"
+   }
 }
