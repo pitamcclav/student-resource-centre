@@ -5,7 +5,7 @@
    "scripts": {
       "dev": "next dev",
       "build": "next build || true",
-      "start": "npm install ts-node --save && prisma migrate deploy && ts-node src/index.ts",
+      "start": "npm install ts-node --save && npx prisma migrate dev && ts-node src/index.ts",
       "lint": "next lint"
       },
 
