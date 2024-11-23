@@ -4,7 +4,6 @@
 import { z } from 'zod';
 import { cookies } from 'next/headers';
 import { authenticateUser } from '@/lib/auth';
-import { initialize } from '@/lib/db';
 
 // Validation schema
 const loginSchema = z.object({
@@ -14,7 +13,6 @@ const loginSchema = z.object({
 
 
 export async function loginUser(formData: FormData) {
-  await initialize();
   console.log('loginUser');
   const validatedFields = loginSchema.safeParse({
     studentNo: formData.get('studentNo') as string,

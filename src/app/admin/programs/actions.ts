@@ -1,24 +1,29 @@
 // actions.ts
 'use server';
 
-import { AppDataSource, initialize } from "@/lib/db";
-import { Program } from "@/entity/Program";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+
+interface Program {
+  id: number;
+  name: string;
+  code: string;
+  duration: number;
+}
 
 export async function getPrograms(search?: string) {
   try {
-    await initialize();
-    const programRepository = AppDataSource.getRepository(Program);
-    
-    let queryBuilder = programRepository.createQueryBuilder("program");
-    
-    if (search) {
-      queryBuilder = queryBuilder.where(
-        "LOWER(program.name) LIKE LOWER(:search) OR LOWER(program.code) LIKE LOWER(:search)",
-        { search: `%${search}%` }
-      );
-    }
 
-    const programs = await queryBuilder.getMany();
+    const programs = await prisma.program.findMany({
+      where: {
+        OR: [
+          { name: { contains: search } },
+          { code: { contains: search } }
+        ]
+      }
+    });
     
     return programs.map(program => ({
       id: program.id,
@@ -34,11 +39,15 @@ export async function getPrograms(search?: string) {
 
 export async function saveProgram(program: Partial<Program>) {
   try {
-    await initialize();
-    const programRepository = AppDataSource.getRepository(Program);
-    const newProgram = programRepository.create(program);
-    const savedProgram = await programRepository.save(newProgram);
-    
+
+    const savedProgram = await prisma.program.create({
+      data: {
+        name: program.name!,
+        code: program.code!,
+        duration: program.duration!
+      }
+    });
+ 
     return {
       id: savedProgram.id,
       name: savedProgram.name,
@@ -53,10 +62,15 @@ export async function saveProgram(program: Partial<Program>) {
 
 export async function updateProgram(id: number, program: Partial<Program>) {
   try {
-    await initialize();
-    const programRepository = AppDataSource.getRepository(Program);
-    await programRepository.update(id, program);
-    const updatedProgram = await programRepository.findOne({ where: { id } });
+
+    const updatedProgram = await prisma.program.update({
+      where: { id },
+      data: {
+        name: program.name!,
+        code: program.code!,
+        duration: program.duration!
+      }
+    });
     
     if (!updatedProgram) {
       throw new Error("Program not found");
@@ -76,9 +90,11 @@ export async function updateProgram(id: number, program: Partial<Program>) {
 
 export async function deleteProgram(id: number) {
   try {
-    await initialize();
-    const programRepository = AppDataSource.getRepository(Program);
-    await programRepository.delete(id);
+
+    await prisma.program.delete({
+      where: { id: id }
+    });
+    
     return true;
   } catch (error) {
     console.error("Error deleting program:", error);

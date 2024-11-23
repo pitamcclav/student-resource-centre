@@ -1,12 +1,11 @@
 // src/lib/auth.ts
 import { jwtVerify, SignJWT } from 'jose'
 import { cookies } from 'next/headers'
-import { AppDataSource, initialize } from '@/lib/db'
 import bcrypt from 'bcrypt'
+import { PrismaClient } from '@prisma/client'
 
-import { Admin } from '@/entity/Admin'
-import { Student } from '@/entity/Student'
 
+const prisma = new PrismaClient();
 const secret = new TextEncoder().encode(process.env.JWT_SECRET)
 
 export async function encrypt(payload: any) {
@@ -46,37 +45,153 @@ export async function getSession() {
     return await decrypt(token)
 }
 
-export async function authenticateUser(studentNo: string, password: string) {
-    const student = await AppDataSource.getRepository(Student).findOne({ where: { studentNo } });
-    if (!student) {
-      throw new Error('User not found');
+export async function saveStudent(studentNo : string, email : string, password : string, programId : number) {
+
+  try {
+    // Check if user already exists
+    const existingUser = await prisma.student.findFirst({
+      where: {
+        OR: [
+          { studentNo: studentNo },
+          { email: email }
+        ]
+      }
+    });
+
+      console.log('trying to get user')
+
+    if (existingUser) {
+      return { 
+        errors: { 
+          general: existingUser.studentNo === studentNo 
+            ? "Student number is already registered" 
+            : "Email is already in use" 
+        },
+        console: existingUser.studentNo === studentNo
+      };
     }
-  
-    const isPasswordValid = await bcrypt.compare(password, student.password);
-    if (!isPasswordValid) {
-      throw new Error('Invalid credentials');
+
+    // Check if program exists
+    const program = await prisma.program.findFirst({
+      where: {
+        id: programId
+      }
+    });
+    if (!program) {
+      return {
+        errorType: "validation",
+        errors: { programId: "Invalid program selected" },
+        console: "Invalid program selected"
+      };
     }
-  
-    const token = await encrypt({ id: student.id, studentNo: student.studentNo });
-    return { token, student };
+
+    console.log('found program:', program);
+
+   console.log(programId);
+   console.log(studentNo);
+    console.log(email);
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    console.log('hashed');
+    // Create user in database
+    const newUser = await prisma.student.create({
+      data: {
+        studentNo: studentNo,
+        email: email,
+        password: hashedPassword,
+        program: {
+          connect: {
+            id: programId
+          }
+        }
+      }
+    });
+
+    console.log('new student saved:', newUser);
+
+    const token = await encrypt({ id: newUser.id, studentNo: newUser.studentNo });
+
+    // Optionally send verification email
+    // await sendVerificationEmail(email);
+
+    return { success: true, token };
+  } catch (error) {
+    console.error('Registration error:', error);
+    return { 
+      errors: { 
+        general: "Registration failed. Please try again." 
+      } 
+    };
   }
+}
+
+export async function authenticateUser(studentNo: string, password: string) {
+
+  const student = await prisma.student.findFirst({
+    where: {
+      studentNo: studentNo,
+    }
+  });
+
+  if (!student) {
+    throw new Error('User not found');
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, student.password);
+  if (!isPasswordValid) {
+    throw new Error('Invalid credentials');
+  }
+
+  const token = await encrypt({ id: student.id, studentNo: student.studentNo });
+  return { token, student };
+    // await initialize()
+    // const student = await AppDataSource.getRepository(Student).findOne({ where: { studentNo } })
+    // if (!student) {
+    //     throw new Error('User not found')
+    // }
+    // const isPasswordValid = await bcrypt.compare(password, student.password)
+    // if (!isPasswordValid) {
+    //     throw new Error('Invalid credentials')
+    // }
+    // const token = await encrypt({ id: student.id, studentNo: student.studentNo })
+    // return { token, student }
+}
 
   export async function authenticateAdmin(email: string, password: string) {
     console.log('authenticating admin')
-    await initialize();
-    const admin = await AppDataSource.getRepository(Admin).findOne({ where: { email } });
+    const admin = await prisma.admin.findFirst({
+      where: {
+        email: email,
+      }
+    });
+
     if (!admin) {
       throw new Error('User not found');
     }
-    console.log(admin.password)
-    console.log(password)
-  
+
     const isPasswordValid = await bcrypt.compare(password, admin.password);
     if (!isPasswordValid) {
       throw new Error('Invalid credentials');
     }
-  
+
     const token = await encrypt({ id: admin.id, email: admin.email });
     return { token, admin };
+    // await initialize();
+    // const admin = await AppDataSource.getRepository(Admin).findOne({ where: { email } });
+    // if (!admin) {
+    //   throw new Error('User not found');
+    // }
+    // console.log(admin.password)
+    // console.log(password)
+  
+    // const isPasswordValid = await bcrypt.compare(password, admin.password);
+    // if (!isPasswordValid) {
+    //   throw new Error('Invalid credentials');
+    // }
+  
+    // const token = await encrypt({ id: admin.id, email: admin.email });
+    // return { token, admin };
   }
 

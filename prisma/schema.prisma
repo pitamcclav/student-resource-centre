@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model admin {
+  id       Int        @id @default(autoincrement())
+  name     String     @db.VarChar(255)
+  email    String     @unique(map: "IDX_de87485f6489f5d0995f584195") @db.VarChar(255)
+  password String     @db.VarChar(255)
+  resource resource[]
+}
+
+model category {
+  id       Int        @id @default(autoincrement())
+  name     String     @db.VarChar(255)
+  resource resource[]
+}
+
+model program {
+  id       Int       @id @default(autoincrement())
+  name     String    @db.VarChar(255)
+  code     String    @unique(map: "IDX_c6b8c4c1adba14ec96387d3c00") @db.VarChar(255)
+  duration Int
+  student  student[]
+}
+
+model resource {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(255)
+  description String?  @db.VarChar(255)
+  createdAt   DateTime @default(now()) @db.DateTime(6)
+  modifiedAt  DateTime @default(now()) @db.DateTime(6)
+  fileUrl     String   @db.VarChar(255)
+  year        Int
+  semester    Int
+  adminId     Int
+  categoryId  Int
+  admin       admin    @relation(fields: [adminId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_21f7b72ad32bbd1a1af49526bfe")
+  category    category @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_66faacb332a925bf732256594e5")
+
+  @@index([adminId], map: "FK_21f7b72ad32bbd1a1af49526bfe")
+  @@index([categoryId], map: "FK_66faacb332a925bf732256594e5")
+}
+
+model student {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique(map: "IDX_a56c051c91dbe1068ad683f536") @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @db.DateTime(6)
+  updatedAt DateTime @default(now()) @db.DateTime(6)
+  programId Int
+  studentNo String   @unique(map: "IDX_9f06708064b961ee046fd00666") @db.VarChar(255)
+  program   program  @relation(fields: [programId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_8a8e270fd7ea1d86e5c08be66f9")
+
+  @@index([programId], map: "FK_8a8e270fd7ea1d86e5c08be66f9")
+}
+
+model user {
+  id        Int    @id @default(autoincrement())
+  firstName String @db.VarChar(255)
+  lastName  String @db.VarChar(255)
+  age       Int
+}
