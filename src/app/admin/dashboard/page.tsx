@@ -10,53 +10,54 @@ import {
 export default function AdminDashboard() {
     
     return (
-        <div className="flex-1 overflow-auto p-8">
-                <div className="flex items-center justify-between">
-                    <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
+        <div className="p-4 md:p-8">
+            <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+                <h1 className="text-2xl font-bold text-gray-900 md:text-3xl">Dashboard Overview</h1>
+                <div className="w-full sm:w-auto">
                     <DatePickerWithRange />
                 </div>
-
-                {/* Dashboard Cards */}
-                <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    <Card className="p-6">
-                        <div className="flex items-center space-x-4">
-                            <CircleIcon className="h-8 w-8 text-blue-500" />
-                            <div>
-                                <p className="text-sm text-gray-500">Total Students</p>
-                                <h3 className="text-2xl font-bold">1,234</h3>
-                            </div>
-                        </div>
-                    </Card>
-                    <Card className="p-6">
-                        <div className="flex items-center space-x-4">
-                            <CircleIcon className="h-8 w-8 text-green-500" />
-                            <div>
-                                <p className="text-sm text-gray-500">Active Resources</p>
-                                <h3 className="text-2xl font-bold">56</h3>
-                            </div>
-                        </div>
-                    </Card>
-                    <Card className="p-6">
-                        <div className="flex items-center space-x-4">
-                            <CircleIcon className="h-8 w-8 text-purple-500" />
-                            <div>
-                                <p className="text-sm text-gray-500">Total Downloads</p>
-                                <h3 className="text-2xl font-bold">892</h3>
-                            </div>
-                        </div>
-                    </Card>
-                </div>
-
-                {/* Recent Activity Section */}
-                <div className="mt-8">
-                    <h2 className="text-xl font-semibold text-gray-900">Recent Activity</h2>
-                    <Card className="mt-4 p-6">
-                        <div className="space-y-4">
-                            {/* Add your recent activity items here */}
-                            <p className="text-gray-600">No recent activity to display</p>
-                        </div>
-                    </Card>
-                </div>
             </div>
+
+            {/* Dashboard Cards */}
+            <div className="mt-8 grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <Card className="p-4 md:p-6">
+                    <div className="flex items-center space-x-4">
+                        <CircleIcon className="h-6 w-6 text-blue-500 md:h-8 md:w-8" />
+                        <div>
+                            <p className="text-sm text-gray-500">Total Students</p>
+                            <h3 className="text-xl font-bold md:text-2xl">1,234</h3>
+                        </div>
+                    </div>
+                </Card>
+                <Card className="p-4 md:p-6">
+                    <div className="flex items-center space-x-4">
+                        <CircleIcon className="h-6 w-6 text-green-500 md:h-8 md:w-8" />
+                        <div>
+                            <p className="text-sm text-gray-500">Active Resources</p>
+                            <h3 className="text-xl font-bold md:text-2xl">56</h3>
+                        </div>
+                    </div>
+                </Card>
+                <Card className="p-4 md:p-6">
+                    <div className="flex items-center space-x-4">
+                        <CircleIcon className="h-6 w-6 text-purple-500 md:h-8 md:w-8" />
+                        <div>
+                            <p className="text-sm text-gray-500">Total Downloads</p>
+                            <h3 className="text-xl font-bold md:text-2xl">892</h3>
+                        </div>
+                    </div>
+                </Card>
+            </div>
+
+            {/* Recent Activity Section */}
+            <div className="mt-8">
+                <h2 className="text-lg font-semibold text-gray-900 md:text-xl">Recent Activity</h2>
+                <Card className="mt-4 p-4 md:p-6">
+                    <div className="space-y-4">
+                        <p className="text-gray-600">No recent activity to display</p>
+                    </div>
+                </Card>
+            </div>
+        </div>
     )
 }
